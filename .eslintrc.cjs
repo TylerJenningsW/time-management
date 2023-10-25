@@ -1,19 +1,8 @@
 /** @type {import("eslint").Linter.Config} */
 const config = {
-  overrides: [
-    {
-      extends: [
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
-      ],
-      files: ["*.ts", "*.tsx"],
-      parserOptions: {
-        project: "time-management/tsconfig.json",
-      },
-    },
-  ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: "time-management/tsconfig.json",
+    project: "./tsconfig.json",
   },
   plugins: ["@typescript-eslint"],
   extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
