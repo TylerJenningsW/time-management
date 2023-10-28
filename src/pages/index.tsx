@@ -13,12 +13,13 @@ const Home: NextPage = () => {
       <main className="flex min-h-screen flex-col items-center gap-4 p-16">
         <HomeBox>
           <h1 className="px-4">00:00:00</h1>
-          <h1 className="px-4">Pomodoro</h1>
-          <input
+          <h1 className="ml-auto">Pomodoro</h1>
+          <Input
             type="checkbox"
             id="pomodoro"
             name="vehicle1"
             value="pomodoro"
+            className=""
           />
         </HomeBox>
         <HomeBox>

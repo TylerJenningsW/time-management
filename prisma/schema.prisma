@@ -18,7 +18,7 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(uuid())
   email        String   @unique
   name         String?
   googleId     String   @unique
@@ -26,6 +26,7 @@ model User {
   refreshToken String?  @db.Text
   updatedAt    DateTime @updatedAt
   events       Event[]
+  tasks        Task[]
 }
 
 model Event {
@@ -33,8 +34,19 @@ model Event {
   title  String
   start  DateTime
   end    DateTime
-  userId Int
+  userId String
   user   User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
