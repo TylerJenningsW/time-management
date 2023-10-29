@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import Link from "next/link";
 
 interface NavLinkProps {
   href: string;
@@ -6,12 +7,12 @@ interface NavLinkProps {
 }
 
 const NavLink: React.FC<NavLinkProps> = ({ href, children }) => (
-  <a
+  <Link
     href={href}
     className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-blue-900 hover:text-white"
   >
     {children}
-  </a>
+  </Link>
 );
 
 export default NavLink;
