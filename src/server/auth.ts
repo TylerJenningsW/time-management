@@ -7,7 +7,7 @@ import {
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
-import { prisma } from "~/server/db";
+import { prisma as db} from "~/server/db";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -45,32 +45,47 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async signIn({ user, account: typedAccount }) {
-      const account = typedAccount!;
-      const email = user.email!;
+      console.log('signing in')
+      const account = typedAccount;
+      const email = user.email;
+  
+      if (!account || !email || !user.name) {
+          console.error("Required values are missing");
+          return false; // or handle the error appropriately
+      }
+  
       console.log(`Email: ${email}`);
       console.log(`Provider Account ID: ${account.providerAccountId}`);
       console.log(`Access Token: ${account.access_token}`);
       if (email && account.providerAccountId && account.access_token) {
-        let dbUser = await prisma.user.findUnique({ where: { email } });
+        let dbUser = await db.user.findUnique({ where: { email } });
         if (!dbUser) {
-          dbUser = await prisma.user.create({
-            data: {
-              email,
-              name: user.name!,
-              googleId: account.providerAccountId, // Google ID
-              accessToken: account.access_token, // Access token
-              refreshToken: account.refresh_token, // Refresh token, if available
-            },
-          });
+            dbUser = await db.user.create({
+                data: {
+                    email,
+                    name: user.name,
+                },
+            });
         }
+        // Assuming you have a relation set up between User and Account in your Prisma schema
+        await db.account.create({
+            data: {
+                userId: dbUser.id,
+                type: account.provider,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token,
+                refresh_token: account.refresh_token,
+            },
+        });
         console.log("Signed in");
         return true;
-      }
+    }
       console.log("Not Signed in");
       return false;
     },
   },
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(db),
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,

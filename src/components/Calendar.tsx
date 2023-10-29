@@ -1,20 +1,6 @@
 import moment from "moment";
 import BaseCalendar from "./CalendarBase";
-
-const events = [
-  {
-    start: moment("2023-10-18T10:00:00").toDate(),
-    end: moment("2023-10-18T11:00:00").toDate(),
-    title: "MRI Registration",
-    type: "Reg", // Add this
-  },
-  {
-    start: moment("2023-10-18T14:00:00").toDate(),
-    end: moment("2023-10-18T15:30:00").toDate(),
-    title: "ENT Appointment",
-    type: "App", // Add this
-  },
-];
+import { api } from "~/utils/api";
 
 const components = {
   event: (props: any) => {
@@ -35,11 +21,28 @@ const components = {
           </div>
         );
       default:
-        return null;
+        return (
+          <div style={{ background: "darkblue", color: "white", height: "100%" }}>
+            {props.title}
+          </div>
+        );
     }
   },
 };
 
 export default function Calendar() {
+  const calendarQuery = api.calendar.getEvents.useQuery();
+
+  if (calendarQuery.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (calendarQuery.isError) {
+    return <div>Error: {calendarQuery.error.message}</div>;
+  }
+
+  const events = calendarQuery.data;
+  console.log("Events from API:", events);
+
   return <BaseCalendar events={events} components={components} />;
 }
