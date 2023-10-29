@@ -21,9 +21,9 @@ function Navbar() {
             </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
-                <NavLink href="#">Home</NavLink>
-                <NavLink href="#">Tasks</NavLink>
-                <NavLink href="#">Calendar</NavLink>
+                <NavLink href="/">Home</NavLink>
+                <NavLink href="/tasks">Tasks</NavLink>
+                <NavLink href="/calendar">Calendar</NavLink>
                 <LoginButton />
               </div>
             </div>

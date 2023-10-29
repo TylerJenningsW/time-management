@@ -3,5 +3,40 @@
 @tailwind utilities;
 
 body {
-    @apply bg-neutral-100 dark:bg-neutral-800 dark:text-gray-100;
-  }
+  @apply bg-neutral-100 dark:bg-neutral-800 dark:text-gray-100;
+}
+
+.rbc-calendar {
+  height: 92vh;
+  color:' #FFFFFF' !important;
+}
+
+.rbc-calendar .rbc-toolbar button {
+  @apply dark:text-white;
+}
+
+.rbc-calendar .rbc-toolbar .rbc-active {
+  @apply dark:text-black;
+
+} 
+.rbc-off-range-bg {
+  @apply dark:bg-neutral-700
+}
+.rbc-today {
+  @apply dark:bg-neutral-900
+}
+
+.rbc-day-slot .rbc-time-slot {
+  @apply dark:border-t-neutral-900 border-solid
+}
+.rbc-time-slot {
+  @apply dark:border-t-black border-solid
+}
+.rbc-time-content {
+  @apply dark:border-t-neutral-900
+}
+
+.rbc-timeslot-group {
+  @apply dark:border-b-black
+
+}
