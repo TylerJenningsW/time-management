@@ -1,8 +1,91 @@
+import { faPlay, faPause, faRedo } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type NextPage } from "next";
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import HomeBox from "~/components/homeTaskBoxes";
 import Input from "~/components/input";
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { useSession } from "next-auth/react";
+config.autoAddCss = false;
+
+const POMODORO_TIME = 25 * 60;
+const SHORT_BREAK = 5 * 60;
+const LONG_BREAK = 15 * 60;
+
 const Home: NextPage = () => {
+  const [timeLeft, setTimeLeft] = useState(POMODORO_TIME);
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [cycles, setCycles] = useState(0);
+  const [isPomodoroMode, setIsPomodoroMode] = useState(true);
+  const [customTime, setCustomTime] = useState(0);
+  const { data: session, status } = useSession();
+
+  const startTimer = () => {
+    setIsEnabled(true);
+  };
+
+  const pauseTimer = () => {
+    setIsEnabled(false);
+  };
+
+  const resetTimer = () => {
+    setIsEnabled(false);
+    if (isPomodoroMode == false) {
+      setTimeLeft(customTime);
+    } else {
+      setTimeLeft(POMODORO_TIME);
+    }
+  };
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
+  };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
+
+    if (isEnabled && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+    } else if (isEnabled && timeLeft <= 0) {
+      clearInterval(interval);
+      if (isPomodoroMode) {
+        if (cycles < 3) {
+          setTimeLeft(SHORT_BREAK);
+          setCycles(cycles + 1);
+        } else {
+          setTimeLeft(LONG_BREAK);
+          setCycles(0);
+        }
+      } else {
+        setIsEnabled(false);
+      }
+    } else {
+      clearInterval(interval);
+      setIsEnabled(false);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isEnabled, timeLeft, isPomodoroMode, cycles]);
+  const handlePomodoroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsPomodoroMode(e.target.checked);
+    if (e.target.checked) {
+      setTimeLeft(POMODORO_TIME);
+      setCycles(0);
+    } else {
+      setTimeLeft(customTime);
+    }
+  };
   return (
     <>
       <Head>
@@ -11,15 +94,55 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center gap-4 p-16">
-        <HomeBox>
-          <h1 className="px-4">00:00:00</h1>
+        <HomeBox className="gap-0 p-0">
+          <button onClick={startTimer}>
+            <FontAwesomeIcon
+              icon={faPlay}
+              className="text-blue-500 hover:text-blue-700"
+            />
+          </button>
+          <button onClick={pauseTimer}>
+            <FontAwesomeIcon
+              icon={faPause}
+              className="text-blue-500 hover:text-blue-700"
+            />
+          </button>
+          <button onClick={resetTimer}>
+            <FontAwesomeIcon
+              icon={faRedo}
+              className="text-blue-500 hover:text-blue-700"
+            />
+          </button>
+
+          {!isPomodoroMode && (
+            <div className="ml-auto gap-2">
+              <label className="" htmlFor="customTime">
+                Set Time (minutes):
+              </label>
+              <input
+                type="number"
+                id="customTime"
+                value={customTime / 60}
+                onChange={(e) => {
+                  setCustomTime(e.target.valueAsNumber * 60);
+                  setTimeLeft(e.target.valueAsNumber * 60);
+                }}
+                className="h-6 w-14 rounded p-1 text-black"
+              />
+            </div>
+          )}
+        </HomeBox>
+        <HomeBox className="">
+          <h1 className="px-4">{formatTime(timeLeft)}</h1>
           <h1 className="ml-auto">Pomodoro</h1>
-          <Input
+          <input
             type="checkbox"
             id="pomodoro"
             name="vehicle1"
             value="pomodoro"
             className=""
+            checked={isPomodoroMode}
+            onChange={handlePomodoroChange}
           />
         </HomeBox>
         <HomeBox>

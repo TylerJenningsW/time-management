@@ -44,7 +44,31 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    
+    async signIn({ user, account: typedAccount }) {
+      const account = typedAccount!;
+      const email = user.email!;
+      console.log(`Email: ${email}`);
+      console.log(`Provider Account ID: ${account.providerAccountId}`);
+      console.log(`Access Token: ${account.access_token}`);
+      if (email && account.providerAccountId && account.access_token) {
+        let dbUser = await prisma.user.findUnique({ where: { email } });
+        if (!dbUser) {
+          dbUser = await prisma.user.create({
+            data: {
+              email,
+              name: user.name!,
+              googleId: account.providerAccountId, // Google ID
+              accessToken: account.access_token, // Access token
+              refreshToken: account.refresh_token, // Refresh token, if available
+            },
+          });
+        }
+        console.log("Signed in");
+        return true;
+      }
+      console.log("Not Signed in");
+      return false;
+    },
   },
   adapter: PrismaAdapter(prisma),
   providers: [
