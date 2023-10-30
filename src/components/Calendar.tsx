@@ -1,6 +1,7 @@
 import moment from "moment";
 import BaseCalendar from "./CalendarBase";
 import { api } from "~/utils/api";
+import React from "react";
 
 const components = {
   event: (props: any) => {
@@ -30,7 +31,7 @@ const components = {
   },
 };
 
-export default function Calendar() {
+function Calendar() {
   const calendarQuery = api.calendar.getEvents.useQuery();
 
   if (calendarQuery.isLoading) {
@@ -46,3 +47,4 @@ export default function Calendar() {
 
   return <BaseCalendar events={events} components={components} />;
 }
+export default Calendar;

@@ -7,7 +7,7 @@ import {
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
-import { prisma as db} from "~/server/db";
+import { prisma as db } from "~/server/db";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -45,42 +45,58 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async signIn({ user, account: typedAccount }) {
-      console.log('signing in')
+      console.log("signing in");
       const account = typedAccount;
       const email = user.email;
-  
+
       if (!account || !email || !user.name) {
-          console.error("Required values are missing");
-          return false; // or handle the error appropriately
+        console.error("Required values are missing");
+        return false;
       }
-  
+
       console.log(`Email: ${email}`);
       console.log(`Provider Account ID: ${account.providerAccountId}`);
       console.log(`Access Token: ${account.access_token}`);
       if (email && account.providerAccountId && account.access_token) {
         let dbUser = await db.user.findUnique({ where: { email } });
         if (!dbUser) {
-            dbUser = await db.user.create({
-                data: {
-                    email,
-                    name: user.name,
-                },
-            });
-        }
-        // Assuming you have a relation set up between User and Account in your Prisma schema
-        await db.account.create({
+          dbUser = await db.user.create({
             data: {
-                userId: dbUser.id,
-                type: account.provider,
-                provider: account.provider,
-                providerAccountId: account.providerAccountId,
+              email,
+              name: user.name,
+            },
+          });
+        }
+
+        const existingAccount = await db.account.findUnique({
+          where: { providerAccountId: account.providerAccountId },
+        });
+
+        if (!existingAccount) {
+          await db.account.create({
+            data: {
+              userId: dbUser.id,
+              type: account.provider,
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+              access_token: account.access_token,
+              refresh_token: account.refresh_token,
+            },
+          });
+        } else {
+          if (existingAccount.access_token !== account.access_token || existingAccount.refresh_token !== account.refresh_token) {
+            await db.account.update({
+              where: { providerAccountId: account.providerAccountId },
+              data: {
                 access_token: account.access_token,
                 refresh_token: account.refresh_token,
-            },
-        });
+              },
+            });
+        }}
+
         console.log("Signed in");
         return true;
-    }
+      }
       console.log("Not Signed in");
       return false;
     },
@@ -95,11 +111,9 @@ export const authOptions: NextAuthOptions = {
           access_type: "offline",
           prompt: "consent",
           scope:
-          "openid profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.freebusy https://www.googleapis.com/auth/calendar.events.owned https://www.googleapis.com/auth/userinfo.email",
-
+            "openid profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.freebusy https://www.googleapis.com/auth/calendar.events.owned https://www.googleapis.com/auth/userinfo.email",
         },
       },
-      
     }),
     /**
      * ...add more providers here.
