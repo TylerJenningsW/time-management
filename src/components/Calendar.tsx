@@ -1,4 +1,3 @@
-import moment from "moment";
 import BaseCalendar from "./CalendarBase";
 import { api } from "~/utils/api";
 import React from "react";
@@ -7,20 +6,6 @@ const components = {
   event: (props: any) => {
     const eventType = props?.event?.type;
     switch (eventType) {
-      case "Reg":
-        return (
-          <div style={{ background: "yellow", color: "black", height: "100%" }}>
-            {props.title}
-          </div>
-        );
-      case "App":
-        return (
-          <div
-            style={{ background: "lightgreen", color: "red", height: "100%" }}
-          >
-            {props.title}
-          </div>
-        );
       default:
         return (
           <div style={{ background: "darkblue", color: "white", height: "100%" }}>

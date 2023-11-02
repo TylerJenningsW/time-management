@@ -94,6 +94,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center gap-4 p-16">
+        <button className="hover:bg-blue-300 absolute left-[-32px] top-1/2 z-10 -translate-y-1/2 -rotate-90 transform rounded bg-blue-500 px-4 py-2 text-white">
+          AI Chatbot
+        </button>
+
         <HomeBox className="gap-0 p-0">
           <button onClick={startTimer}>
             <FontAwesomeIcon
