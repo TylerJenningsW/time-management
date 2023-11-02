@@ -23,6 +23,7 @@ const server = z.object({
   GOOGLE_CLIENT_SECRET: z.string(),
   STRIPE_PUBLIC_KEY: z.string(),
   STRIPE_SECRET_KEY: z.string(),
+  PRICE_ID: z.string(),
 });
 
 /**
@@ -48,6 +49,7 @@ const processEnv = {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  PRICE_ID: process.env.PRICE_ID,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
