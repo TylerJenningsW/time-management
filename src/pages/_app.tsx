@@ -2,6 +2,7 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { NextUIProvider } from "@nextui-org/react";
+import {ThemeProvider as NextThemesProvider} from "next-themes";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -18,8 +19,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <NextUIProvider>
+      <NextThemesProvider attribute="class" defaultTheme="dark">
         <Navbar />
         <Component {...pageProps} />
+        </NextThemesProvider>
       </NextUIProvider>
     </SessionProvider>
   );
