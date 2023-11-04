@@ -2,6 +2,7 @@ import BaseCalendar from "./CalendarBase";
 import { api } from "~/utils/api";
 import React from "react";
 import { Spinner } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 
 const components = {
   event: (props: any) => {
@@ -9,7 +10,9 @@ const components = {
     switch (eventType) {
       default:
         return (
-          <div style={{ background: "darkblue", color: "white", height: "100%" }}>
+          <div
+            style={{ background: "darkblue", color: "white", height: "100%" }}
+          >
             {props.title}
           </div>
         );
@@ -18,11 +21,22 @@ const components = {
 };
 
 function Calendar() {
+  const { data: session, status } = useSession();
   const calendarQuery = api.calendar.getEvents.useQuery();
+  if (!session?.user) {
+    return (
+      <div className="flex min-h-screen flex-col items-center gap-4 p-16">
+        Sign In
+      </div>
+    );
+  }
 
   if (calendarQuery.isLoading) {
-    return <div>Loading...    <Spinner />
-    </div>;
+    return (
+      <div className="flex min-h-screen flex-col items-center gap-4 p-16">
+        Loading... <Spinner />
+      </div>
+    );
   }
 
   if (calendarQuery.isError) {

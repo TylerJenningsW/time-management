@@ -10,7 +10,7 @@ import NavDropdown from "./dropDownMenu";
 
 function Navbar() {
   const session = useSession();
-  const isLoggedIn = true;
+  const isLoggedIn = session.data?.user;
 
   return (
     <nav className="bg-blue-700">
@@ -38,13 +38,17 @@ function Navbar() {
                     height={40}
                   />
                 ) : (
-                  <FontAwesomeIcon
-                    icon={faUser}
-                    className="mb-3 ml-auto text-white"
-                  />
+                  <p className="mb-2 ml-auto text-white">
+                    {session.data?.user.name}
+                  </p>
                 ))}
-
-              <NavDropdown/>
+              {!isLoggedIn && (
+                <FontAwesomeIcon
+                  icon={faUser}
+                  className="mb-3 ml-auto text-white"
+                />
+              )}
+              <NavDropdown />
             </div>
           </div>
         </div>

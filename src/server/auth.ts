@@ -8,6 +8,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
 import { prisma as db } from "~/server/db";
+import { type JWT } from "next-auth/jwt";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -29,21 +30,71 @@ declare module "next-auth" {
   //   // role: UserRole;
   // }
 }
+async function refreshAccessToken(token: JWT) {
+  try {
+    const url = `https://oauth2.googleapis.com/token`;
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        client_id: env.GOOGLE_CLIENT_ID,
+        client_secret: env.GOOGLE_CLIENT_SECRET,
+        grant_type: "refresh_token",
+        refresh_token: token.refreshToken as string,
+      }),
+      method: "POST",
+    });
 
+    const refreshedTokens = await response.json();
+
+    if (!response.ok) {
+      throw refreshedTokens;
+    }
+
+    return {
+      ...token,
+      accessToken: refreshedTokens.access_token,
+      accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+    };
+  } catch (error) {
+    console.error("RefreshAccessTokenError", error);
+
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-        // session.user.role = user.role; <-- put other properties on the session here
+    async jwt({ token, account }) {
+      if (account && account.access_token && account.expires_at) {
+        token.accessToken = account.access_token as string;
+        token.accessTokenExpires =
+          Date.now() + (account.expires_at as number) * 1000;
+        token.refreshToken = account.refresh_token as string | undefined;
+        return token;
       }
-      return session;
+      if (
+        typeof token.accessTokenExpires === "number" &&
+        Date.now() > token.accessTokenExpires
+      ) {
+        return refreshAccessToken(token);
+      }
+
+      return token;
     },
+
     async signIn({ user, account: typedAccount }) {
       console.log("signing in");
       const account = typedAccount;
@@ -84,7 +135,10 @@ export const authOptions: NextAuthOptions = {
             },
           });
         } else {
-          if (existingAccount.access_token !== account.access_token || existingAccount.refresh_token !== account.refresh_token) {
+          if (
+            existingAccount.access_token !== account.access_token ||
+            existingAccount.refresh_token !== account.refresh_token
+          ) {
             await db.account.update({
               where: { providerAccountId: account.providerAccountId },
               data: {
@@ -92,7 +146,8 @@ export const authOptions: NextAuthOptions = {
                 refresh_token: account.refresh_token,
               },
             });
-        }}
+          }
+        }
 
         console.log("Signed in");
         return true;
@@ -110,8 +165,16 @@ export const authOptions: NextAuthOptions = {
         params: {
           access_type: "offline",
           prompt: "consent",
-          scope:
-            "openid profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.freebusy https://www.googleapis.com/auth/calendar.events.owned https://www.googleapis.com/auth/userinfo.email",
+          scope: [
+            "openid",
+            "profile",
+            "email",
+            "https://www.googleapis.com/auth/calendar.readonly",
+            "https://www.googleapis.com/auth/calendar.events",
+            "https://www.googleapis.com/auth/calendar.freebusy",
+            "https://www.googleapis.com/auth/calendar.events.owned",
+            "https://www.googleapis.com/auth/userinfo.email",
+          ].join(" "),
         },
       },
     }),
