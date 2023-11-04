@@ -101,7 +101,6 @@ const Home: NextPage = () => {
           AI Chatbot
         </button>
         <Timer></Timer>
-        <CreateTask />
       </main>
     </>
   );

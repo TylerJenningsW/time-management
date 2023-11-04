@@ -1,6 +1,7 @@
 import BaseCalendar from "./CalendarBase";
 import { api } from "~/utils/api";
 import React from "react";
+import { Spinner } from "@nextui-org/react";
 
 const components = {
   event: (props: any) => {
@@ -20,7 +21,8 @@ function Calendar() {
   const calendarQuery = api.calendar.getEvents.useQuery();
 
   if (calendarQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...    <Spinner />
+    </div>;
   }
 
   if (calendarQuery.isError) {
