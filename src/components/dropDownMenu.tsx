@@ -13,6 +13,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@nextui-org/react";
+import { ThemeSwitcher } from "./themeSwitcher";
 
 export default function NavDropdown() {
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
@@ -49,13 +50,7 @@ export default function NavDropdown() {
               <ModalHeader className="flex flex-col gap-1">Settings</ModalHeader>
               <ModalBody>
                 <div className="flex py-2 px-1 justify-between">
-                  <Checkbox
-                    classNames={{
-                      label: "text-small",
-                    }}
-                  >
-                    Dark Mode
-                  </Checkbox>
+                  <ThemeSwitcher></ThemeSwitcher>
                 </div>
               </ModalBody>
               <ModalFooter>
