@@ -31,8 +31,8 @@ declare module "next-auth" {
   // }
 }
 async function refreshAccessToken(token: JWT) {
+  const url = `https://oauth2.googleapis.com/token`;
   try {
-    const url = `https://oauth2.googleapis.com/token`;
     const response = await fetch(url, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -49,7 +49,9 @@ async function refreshAccessToken(token: JWT) {
     const refreshedTokens = await response.json();
 
     if (!response.ok) {
-      throw refreshedTokens;
+      throw new Error(
+        refreshedTokens.error_description || "Failed to refresh access token"
+      );
     }
 
     return {
@@ -60,13 +62,13 @@ async function refreshAccessToken(token: JWT) {
     };
   } catch (error) {
     console.error("RefreshAccessTokenError", error);
-
     return {
       ...token,
       error: "RefreshAccessTokenError",
     };
   }
 }
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -89,7 +91,9 @@ export const authOptions: NextAuthOptions = {
         typeof token.accessTokenExpires === "number" &&
         Date.now() > token.accessTokenExpires
       ) {
-        return refreshAccessToken(token);
+        const refreshedToken = await refreshAccessToken(token);
+
+        return refreshedToken;
       }
 
       return token;
@@ -174,6 +178,8 @@ export const authOptions: NextAuthOptions = {
             "https://www.googleapis.com/auth/calendar.freebusy",
             "https://www.googleapis.com/auth/calendar.events.owned",
             "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/contacts.readonly",
+            "https://www.googleapis.com/auth/gmail.send",
           ].join(" "),
         },
       },
