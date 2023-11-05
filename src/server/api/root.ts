@@ -1,6 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { exampleRouter } from "~/server/api/routers/example";
-import { addTaskRouter } from "./routers/addTaskRouter";
+import { taskRouter } from "./routers/taskRouter";
 import { calendarRouter } from "./routers/calendarRouter";
 import { checkoutRouter } from "./routers/checkoutRouter";
 import { contactsRouter } from "./routers/contactsRouter";
@@ -12,7 +12,7 @@ import { contactsRouter } from "./routers/contactsRouter";
  */
 export const appRouter = createTRPCRouter({
   example: exampleRouter,
-  task: addTaskRouter,
+  task: taskRouter,
   calendar: calendarRouter,
   checkout: checkoutRouter,
   contacts: contactsRouter,

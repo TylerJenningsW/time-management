@@ -2,40 +2,91 @@ import {
   Button,
   Card,
   CardBody,
+  CardFooter,
   CardHeader,
   Input,
   Select,
   SelectItem,
 } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
+import { api } from "~/utils/api";
 const categories = [{ value: "Work" }, { value: "School" }];
-
 function CreateTask() {
-  function handleCreateTask() {
-    // todo
+  const { data: session } = useSession();
+
+  const [taskTitle, setTaskTitle] = useState({ title: "" });
+
+  const [taskCategory, setTaskCategory] = useState({ category: "" });
+  const response = api.task.add.useMutation({
+    onSuccess(data) {
+      console.log(data);
+    },
+  });
+  function updateCategory(key: string) {
+    return function (e: React.MouseEvent<HTMLLIElement>) {
+      const selectedCategory = e.currentTarget.getAttribute("data-value");
+      setTaskCategory((prev) => ({ ...prev, [key]: selectedCategory }));
+    };
   }
+  function updateForm(key: string) {
+    return function (e: React.ChangeEvent<HTMLInputElement>) {
+      setTaskTitle((prev) => ({ ...prev, [key]: e.target.value }));
+    };
+  }
+  function handleFormSubmit(e: React.FormEvent) {
+    console.log("test")
+    e.preventDefault();
+    if (session == undefined) {
+      console.log("Undefined");
+      return;
+    } else {
+      console.log(session.user);
+      console.log(session.user.id);
+      console.log(session.user.name);
+    }
+
+    console.log(session.user);
+    console.log(session.user.id);
+    console.log(session.user.name);
+    response.mutate({
+      title: taskTitle.title,
+      category: taskCategory.category,
+      
+    });
+  }
+
   return (
-    <Card className="flex w-2/4 flex-row gap-4 rounded border-black bg-neutral-300 p-4 dark:bg-neutral-600">
-      <CardHeader className="gap-8 items-center">
+    <>
+      <CardFooter className="items-center gap-8">
+        <form></form>
         <Input
           className=""
           type="text"
           label="Task"
           placeholder="Enter your Task"
+          onChange={updateForm("title")}
         />
 
         <Select label="Select a Category" className="max-w-xs">
           {categories.map((category) => (
-            <SelectItem key={category.value} value={category.value}>
+            <SelectItem
+              onSelect={updateCategory("category")}
+              key={category.value}
+              value={category.value}
+            >
               {category.value}
             </SelectItem>
           ))}
         </Select>
-        <Button onClick={handleCreateTask} className="ml-auto max-w-xs p-7">
+        <Button
+          onClick={handleFormSubmit}
+          className="m1-auto bg-blue-500 max-w-xs p-7 hover:bg-blue-700"
+        >
           +
         </Button>
-      </CardHeader>
-      <CardBody className=""></CardBody>
-    </Card>
+      </CardFooter>
+    </>
   );
 }
 

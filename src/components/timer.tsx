@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
+import CreateTask from "./createTask";
 const POMODORO_TIME = 25 * 60;
 const SHORT_BREAK = 5 * 60;
 const LONG_BREAK = 15 * 60;
@@ -151,24 +152,7 @@ function Timer() {
         />
       </CardBody>
       <Divider />
-      <CardFooter className="items-center gap-8">
-        <Input
-          className=""
-          type="text"
-          label="Task"
-          placeholder="Enter your Task"
-        />
-        <Select label="Select a Category" className="max-w-xs">
-          {categories.map((category) => (
-            <SelectItem key={category.value} value={category.value}>
-              {category.value}
-            </SelectItem>
-          ))}
-        </Select>
-        <Button onClick={handleCreateTask} className="ml-auto max-w-xs p-7 bg-blue-500 hover:bg-blue-700">
-          +
-        </Button>
-      </CardFooter>
+      <CreateTask/>
     </Card>
   );
 }

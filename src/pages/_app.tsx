@@ -17,7 +17,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} refetchInterval={5 * 60}>
       <NextUIProvider>
       <NextThemesProvider attribute="class" defaultTheme="dark">
         <Navbar />

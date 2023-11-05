@@ -5,84 +5,56 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { useSession } from "next-auth/react";
 import Timer from "~/components/timer";
+import { api } from "~/utils/api";
+import { Card } from "@nextui-org/react";
+import { type Task } from "~/types/types";
+import Loading from "~/components/loading";
+
 config.autoAddCss = false;
 
-const POMODORO_TIME = 25 * 60;
-const SHORT_BREAK = 5 * 60;
-const LONG_BREAK = 15 * 60;
-
 const Home: NextPage = () => {
-  const [timeLeft, setTimeLeft] = useState(POMODORO_TIME);
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [cycles, setCycles] = useState(0);
-  const [isPomodoroMode, setIsPomodoroMode] = useState(true);
-  const [customTime, setCustomTime] = useState(0);
-  const { data: session, status } = useSession();
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState("");
 
-  const startTimer = () => {
-    setIsEnabled(true);
-  };
-
-  const pauseTimer = () => {
-    setIsEnabled(false);
-  };
-
-  const resetTimer = () => {
-    setIsEnabled(false);
-    if (isPomodoroMode == false) {
-      setTimeLeft(customTime);
-    } else {
-      setTimeLeft(POMODORO_TIME);
-    }
-  };
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
-      2,
-      "0"
-    )}`;
-  };
+  const { data: session } = useSession();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const { data, isLoading, error } = api.task.get.useQuery();
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | undefined;
+    if (data) {
+      console.log("Data:", data);
 
-    if (isEnabled && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft(timeLeft - 1);
-      }, 1000);
-    } else if (isEnabled && timeLeft <= 0) {
-      clearInterval(interval);
-      if (isPomodoroMode) {
-        if (cycles < 3) {
-          setTimeLeft(SHORT_BREAK);
-          setCycles(cycles + 1);
-        } else {
-          setTimeLeft(LONG_BREAK);
-          setCycles(0);
-        }
-      } else {
-        setIsEnabled(false);
-      }
-    } else {
-      clearInterval(interval);
-      setIsEnabled(false);
-    }
+      const tasksWithIdAsString = data.map((task) => ({
+        ...task,
+        id: task.id.toString(),
+      }));
+      console.log("Tasks with ID as String:", tasksWithIdAsString);
 
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isEnabled, timeLeft, isPomodoroMode, cycles]);
-  const handlePomodoroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsPomodoroMode(e.target.checked);
-    if (e.target.checked) {
-      setTimeLeft(POMODORO_TIME);
-      setCycles(0);
-    } else {
-      setTimeLeft(customTime);
+      setTasks(tasksWithIdAsString);
+      setLoading(false);
     }
-  };
+  }, [data]);
+  let content;
+
+  if (isLoading || loading) {
+    content = <Loading />;
+  } else if (error) {
+    content = <div>An error occurred: {error.message}</div>;
+  } else {
+    content = (
+      <>
+        {tasks.map((task) => (
+          <Card
+            className="flex w-2/4 gap-4 rounded border-black bg-neutral-300 p-4 dark:bg-neutral-600"
+            key={task.id}
+          >
+            <h2>{task.title}</h2>
+            <p>{task.category}</p>
+          </Card>
+        ))}
+      </>
+    );
+  }
   return (
     <>
       <Head>
@@ -95,6 +67,7 @@ const Home: NextPage = () => {
           AI Chatbot
         </button>
         <Timer></Timer>
+        {content}
       </main>
     </>
   );

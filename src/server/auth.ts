@@ -30,6 +30,7 @@ declare module "next-auth" {
   //   // role: UserRole;
   // }
 }
+
 async function refreshAccessToken(token: JWT) {
   const url = `https://oauth2.googleapis.com/token`;
   try {
@@ -78,13 +79,30 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+
   callbacks: {
-    async jwt({ token, account }) {
+    session({ session, user, token }) {
+      if (token.uid) {
+        session.user.id = token.uid as string; // Assuming `token.uid` contains the user's ID
+        // Add other properties to the session here if needed
+      }
+      return session;
+    },
+    async jwt({ token, account, user, profile }) {
+      if (user?.id) {
+        token.uid = user.id;
+      }
+      if (account) {
+        token.id = profile?.sub;
+      }
+
       if (account && account.access_token && account.expires_at) {
         token.accessToken = account.access_token as string;
         token.accessTokenExpires =
           Date.now() + (account.expires_at as number) * 1000;
         token.refreshToken = account.refresh_token as string | undefined;
+        token.id = user?.id;
+
         return token;
       }
       if (

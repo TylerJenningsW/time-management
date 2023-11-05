@@ -16,3 +16,12 @@ export type Contact = {
   name: string;
   email: string;
 };
+export interface Task {
+  id: string;
+  title: string;
+  category: string;
+}
+
+export interface HomeProps {
+  tasks: Task[];
+}
