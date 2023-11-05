@@ -3,6 +3,7 @@ import { api } from "~/utils/api";
 import React from "react";
 import { Spinner } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
+import Loading from "./loading";
 
 const components = {
   event: (props: any) => {
@@ -33,9 +34,7 @@ function Calendar() {
 
   if (calendarQuery.isLoading) {
     return (
-      <div className="flex min-h-screen flex-col items-center gap-4 p-16">
-        Loading... <Spinner />
-      </div>
+      <Loading/>
     );
   }
 

@@ -2,19 +2,8 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { google } from "googleapis";
 import { type OAuth2Client } from "google-auth-library";
 import { rrulestr } from "rrule";
-type GoogleEvent = {
-  id: string;
-  summary: string;
-  start: {
-    dateTime?: string;
-    date?: string;
-  };
-  end: {
-    dateTime?: string;
-    date?: string;
-  };
-  recurrence?: string[];
-};
+import { type GoogleEvent } from "~/types/types";
+
 
 async function fetchAllEvents(
   oauth2Client: OAuth2Client
@@ -81,7 +70,6 @@ export const calendarRouter = createTRPCRouter({
       refresh_token: account.refresh_token,
     });
 
-    // Use the fetchAllEvents function to get all events
     const allEvents = await fetchAllEvents(oauth2Client);
 
     return allEvents.flatMap((event) => {

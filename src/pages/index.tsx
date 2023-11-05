@@ -1,15 +1,9 @@
-import { faPlay, faPause, faRedo } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import HomeBox from "~/components/homeTaskBoxes";
-import Input from "~/components/input";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { useSession } from "next-auth/react";
-import CreateTask from "~/components/createTask";
-import { Card } from "@nextui-org/react";
 import Timer from "~/components/timer";
 config.autoAddCss = false;
 
@@ -97,7 +91,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center gap-4 p-16">
-        <button className="absolute left-[-32px] top-1/2 z-10 -translate-y-1/2 -rotate-90 transform rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-300">
+        <button className="absolute left-[-36px] top-1/2 z-10 -translate-y-1/2 -rotate-90 transform rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-300">
           AI Chatbot
         </button>
         <Timer></Timer>
