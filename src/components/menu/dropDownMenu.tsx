@@ -14,10 +14,12 @@ import {
   Divider,
   Spacer,
 } from "@nextui-org/react";
-import { ThemeSwitcher } from "./themeSwitcher";
-import Contacts from "./contactsListView";
+import { ThemeSwitcher } from "../themeSwitcher";
+import Contacts from "../contactsListView";
+import UseBuyCredits from "~/hooks/useBuyCredits";
 
 export default function NavDropdown() {
+  const { buyCredits } = UseBuyCredits();
   const {
     isOpen: isSettingsOpen,
     onOpen: onSettingsOpen,
@@ -43,7 +45,9 @@ export default function NavDropdown() {
           <DropdownItem onClick={onContactsOpen} key="contacts">
             Contacts
           </DropdownItem>
-          <DropdownItem key="addcredits">Add Credits</DropdownItem>
+          <DropdownItem onClick={buyCredits} key="addcredits">
+            Add Credits
+          </DropdownItem>
         </DropdownMenu>
       </Dropdown>
       <Modal

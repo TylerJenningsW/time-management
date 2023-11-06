@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import NavDropdown from "../dropDownMenu";
+import NavDropdown from "./dropDownMenu";
 
 function Navbar() {
   const session = useSession();
