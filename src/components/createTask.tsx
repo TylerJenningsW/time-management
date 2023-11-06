@@ -1,9 +1,6 @@
 import {
   Button,
-  Card,
-  CardBody,
   CardFooter,
-  CardHeader,
   Input,
   Select,
   SelectItem,
@@ -17,25 +14,20 @@ function CreateTask() {
 
   const [taskTitle, setTaskTitle] = useState({ title: "" });
 
-  const [taskCategory, setTaskCategory] = useState({ category: "" });
+  const [taskCategory, setTaskCategory] = useState("");
   const response = api.task.add.useMutation({
     onSuccess(data) {
       console.log(data);
     },
   });
-  function updateCategory(key: string) {
-    return function (e: React.MouseEvent<HTMLLIElement>) {
-      const selectedCategory = e.currentTarget.getAttribute("data-value");
-      setTaskCategory((prev) => ({ ...prev, [key]: selectedCategory }));
-    };
-  }
+  
   function updateForm(key: string) {
     return function (e: React.ChangeEvent<HTMLInputElement>) {
       setTaskTitle((prev) => ({ ...prev, [key]: e.target.value }));
     };
   }
   function handleFormSubmit(e: React.FormEvent) {
-    console.log("test")
+    console.log("test");
     e.preventDefault();
     if (session == undefined) {
       console.log("Undefined");
@@ -51,8 +43,7 @@ function CreateTask() {
     console.log(session.user.name);
     response.mutate({
       title: taskTitle.title,
-      category: taskCategory.category,
-      
+      category: taskCategory,
     });
   }
 
@@ -68,20 +59,20 @@ function CreateTask() {
           onChange={updateForm("title")}
         />
 
-        <Select label="Select a Category" className="max-w-xs">
+        <Select
+          label="Select a Category"
+          className="max-w-xs"
+          onChange={(e) => setTaskCategory(e.target.value)}
+        >
           {categories.map((category) => (
-            <SelectItem
-              onSelect={updateCategory("category")}
-              key={category.value}
-              value={category.value}
-            >
+            <SelectItem key={category.value} value={category.value}>
               {category.value}
             </SelectItem>
           ))}
         </Select>
         <Button
           onClick={handleFormSubmit}
-          className="m1-auto bg-blue-500 max-w-xs p-7 hover:bg-blue-700"
+          className="m1-auto max-w-xs bg-blue-500 p-7 hover:bg-blue-700"
         >
           +
         </Button>

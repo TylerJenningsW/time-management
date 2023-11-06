@@ -6,15 +6,16 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { useSession } from "next-auth/react";
 import Timer from "~/components/timer";
 import { api } from "~/utils/api";
-import { Card } from "@nextui-org/react";
+import { Card, CardHeader } from "@nextui-org/react";
 import { type Task } from "~/types/types";
 import Loading from "~/components/loading";
+import TrashIcon from "~/svgs/deleteIcon";
+import CheckIcon from "~/svgs/checkIcon";
 
 config.autoAddCss = false;
 
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState("");
 
   const { data: session } = useSession();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -48,8 +49,12 @@ const Home: NextPage = () => {
             className="flex w-2/4 gap-4 rounded border-black bg-neutral-300 p-4 dark:bg-neutral-600"
             key={task.id}
           >
-            <h2>{task.title}</h2>
-            <p>{task.category}</p>
+            <CardHeader>
+            <h2 className="px-8">{task.title}</h2>
+            <p className="ml-auto px-8">{task.category}</p>
+            <CheckIcon className="ml-auto"/>
+            <TrashIcon/>
+            </CardHeader>
           </Card>
         ))}
       </>
