@@ -5,6 +5,7 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { api } from "~/utils/api";
@@ -15,12 +16,14 @@ function CreateTask() {
   const [taskTitle, setTaskTitle] = useState({ title: "" });
 
   const [taskCategory, setTaskCategory] = useState("");
+  const trpc = api.useUtils();
   const response = api.task.add.useMutation({
     onSuccess(data) {
       console.log(data);
+      trpc.task.get.invalidate();
     },
   });
-  
+
   function updateForm(key: string) {
     return function (e: React.ChangeEvent<HTMLInputElement>) {
       setTaskTitle((prev) => ({ ...prev, [key]: e.target.value }));

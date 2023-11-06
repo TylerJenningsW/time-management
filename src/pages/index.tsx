@@ -21,6 +21,7 @@ const Home: NextPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const { data, isLoading, error } = api.task.get.useQuery();
 
+
   useEffect(() => {
     if (data) {
       console.log("Data:", data);
