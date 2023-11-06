@@ -1,10 +1,8 @@
 import { type NextPage } from "next";
-import Calendar from "~/components/Calendar";
+import Calendar from "~/components/calendar/Calendar";
 
 const CalendarPage: NextPage = () => {
-    return (
-        <Calendar></Calendar>
-    )
-}
+  return <Calendar></Calendar>;
+};
 
 export default CalendarPage;
