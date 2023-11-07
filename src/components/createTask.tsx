@@ -5,7 +5,6 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { api } from "~/utils/api";

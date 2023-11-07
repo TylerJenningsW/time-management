@@ -11,6 +11,7 @@ import { type Task } from "~/types/types";
 import Loading from "~/components/loading";
 import TrashIcon from "~/svgs/deleteIcon";
 import CheckIcon from "~/svgs/checkIcon";
+import AiButton from "~/components/aiButton";
 
 config.autoAddCss = false;
 
@@ -69,9 +70,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center gap-4 p-16">
-        <button className="absolute left-[-36px] top-1/2 z-10 -translate-y-1/2 -rotate-90 transform rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-300">
-          AI Chatbot
-        </button>
+        <AiButton></AiButton>
         <Timer></Timer>
         {content}
       </main>
