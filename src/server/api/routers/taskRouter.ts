@@ -32,4 +32,23 @@ export const taskRouter = createTRPCRouter({
 
     return account?.tasks;
   }),
+  delete: protectedProcedure
+    .input(z.object({ taskId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const taskId = input.taskId;
+      const userId = ctx.session.user.id;
+
+      const deletedTask = await ctx.prisma.task.deleteMany({
+        where: {
+          id: taskId,
+          userId: userId,
+        },
+      });
+
+      if (deletedTask.count === 0) {
+        throw new Error("Task not found or user not authorized to delete this task");
+      }
+
+      return { success: true, taskId: taskId };
+    }),
 });

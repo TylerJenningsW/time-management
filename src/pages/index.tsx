@@ -21,19 +21,30 @@ const Home: NextPage = () => {
   const { data: session } = useSession();
   const [tasks, setTasks] = useState<Task[]>([]);
   const { data, isLoading, error } = api.task.get.useQuery();
+  const trpc = api.useUtils();
 
-
+  const deleteMutation = api.task.delete.useMutation({
+    onSuccess: (data) => {
+      trpc.invalidate();
+    },
+    onError: (error) => {
+      console.error("Error getting AI response:", error);
+    },
+  });
+  const handleDeleteTask = async (taskId: number) => {
+    try {
+      // Call your API to delete the task
+      await deleteMutation.mutate({ taskId: taskId });
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    } catch (error) {
+      console.error("Failed to delete task:", error);
+    }
+  };
   useEffect(() => {
     if (data) {
       console.log("Data:", data);
 
-      const tasksWithIdAsString = data.map((task) => ({
-        ...task,
-        id: task.id.toString(),
-      }));
-      console.log("Tasks with ID as String:", tasksWithIdAsString);
-
-      setTasks(tasksWithIdAsString);
+      setTasks(data);
       setLoading(false);
     }
   }, [data]);
@@ -52,10 +63,12 @@ const Home: NextPage = () => {
             key={task.id}
           >
             <CardHeader>
-            <h2 className="px-8">{task.title}</h2>
-            <p className="ml-auto px-8">{task.category}</p>
-            <CheckIcon className="ml-auto"/>
-            <TrashIcon/>
+              <h2 className="px-8">{task.title}</h2>
+              <p className="ml-auto px-8">{task.category}</p>
+              <CheckIcon className="ml-auto" />
+              <button onClick={() => handleDeleteTask(task.id)}>
+                <TrashIcon />
+              </button>
             </CardHeader>
           </Card>
         ))}
@@ -66,7 +79,10 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>Time Management App</title>
-        <meta name="description" content="Time Management App for making better use of your time." />
+        <meta
+          name="description"
+          content="Time Management App for making better use of your time."
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center gap-4 p-16">

@@ -17,7 +17,7 @@ export type Contact = {
   email: string;
 };
 export interface Task {
-  id: string;
+  id: number;
   title: string;
   category: string;
 }
