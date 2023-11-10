@@ -11,16 +11,19 @@ export const config = {
 };
 const webhook = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method == "POST") {
+    console.log("here ok")
     const buf = await buffer(req);
     const sig = req.headers["stripe-signature"] as string;
 
     let event;
 
     try {
+      console.log("here ok2")
+
       event = stripe.webhooks.constructEvent(
         buf,
         sig,
-        env.STRIPE_WEBHOOK_SECRET
+        `${env.STRIPE_WEBHOOK_SECRET}`
       );
     } catch (err) {
       let message = "Unknown error";
