@@ -70,8 +70,21 @@ export const calendarRouter = createTRPCRouter({
       refresh_token: account.refresh_token,
     });
 
-    const allEvents = await fetchAllEvents(oauth2Client);
+    oauth2Client.on('tokens', async (tokens) => {
+      if (tokens.refresh_token) {
+        await ctx.prisma.account.update({
+          where: { id: account.id },
+          data: { refresh_token: tokens.refresh_token },
+        });
+      }
+      await ctx.prisma.account.update({
+        where: { id: account.id },
+        data: { access_token: tokens.access_token },
+      });
+    });
 
+    const allEvents = await fetchAllEvents(oauth2Client);
+    
     return allEvents.flatMap((event) => {
       const startDateTime = event.start?.dateTime;
       const startDate = event.start?.date;

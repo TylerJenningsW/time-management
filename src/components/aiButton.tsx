@@ -33,8 +33,8 @@ function AiButton() {
   });
 
   const handleOnClick = () => {
-    // Call the mutation with the prompt
     chatMutation.mutate({ text: prompt });
+    
   };
   return (
     <>

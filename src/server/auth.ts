@@ -32,7 +32,7 @@ declare module "next-auth" {
 }
 
 async function refreshAccessToken(token: JWT) {
-  const url = `https://oauth2.googleapis.com/token`;
+  const url = `https://www.googleapis.com/oauth2/v3/token`;
   try {
     const response = await fetch(url, {
       headers: {
@@ -48,7 +48,16 @@ async function refreshAccessToken(token: JWT) {
     });
 
     const refreshedTokens = await response.json();
-
+    await db.account.update({
+      where: {
+        id: token.uid as string,
+      },
+      data: {
+        access_token: refreshedTokens.access_token,
+        refresh_token: refreshedTokens.refresh_token ?? token.refreshToken,
+        expires_at: Math.floor(Date.now() / 1000) + refreshedTokens.expires_in,
+      },
+    });
     if (!response.ok) {
       throw new Error(
         refreshedTokens.error_description || "Failed to refresh access token"
@@ -83,8 +92,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     session({ session, user, token }) {
       if (token.uid) {
-        session.user.id = token.uid as string; // Assuming `token.uid` contains the user's ID
-        // Add other properties to the session here if needed
+        session.user.id = token.uid as string;
       }
       return session;
     },
