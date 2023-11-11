@@ -7,11 +7,13 @@ import Image from "next/image";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NavDropdown from "./dropDownMenu";
+import { api } from "~/utils/api";
 
 function Navbar() {
   const session = useSession();
   const isLoggedIn = session.data?.user;
-
+  const queryCredits = api.user.getCredits.useQuery();
+  const credits = queryCredits.data
   return (
     <nav className="bg-blue-700">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -38,9 +40,12 @@ function Navbar() {
                     height={40}
                   />
                 ) : (
+                  <>
                   <p className="mb-2 ml-auto text-white">
                     {session.data?.user.name}
                   </p>
+                  <p className="font-bold mb-2 items-center justify-center">Credits: {credits}</p>
+                  </>
                 ))}
               {!isLoggedIn && (
                 <FontAwesomeIcon

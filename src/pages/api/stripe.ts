@@ -2,7 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import Stripe from "stripe";
 import { env } from "~/env.mjs";
 import { buffer } from "micro";
-import { prisma } from "../db";
+import { prisma } from "../../server/db";
 const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 export const config = {
   api: {
@@ -33,8 +33,10 @@ const webhook = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     switch (event.type) {
       case "checkout.session.completed":
+        console.log("completed")
         const session = event.data.object as Stripe.Checkout.Session;
         if (session.metadata && "userId" in session.metadata) {
+          console.log("meta")
           const userId = session.metadata.userId as string;
 
           await prisma.user.update({
