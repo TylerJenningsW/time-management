@@ -12,6 +12,7 @@ import Loading from "~/components/loading";
 import TrashIcon from "~/svgs/deleteIcon";
 import CheckIcon from "~/svgs/checkIcon";
 import AiButton from "~/components/aiButton";
+import { useToast } from "@/components/ui/use-toast";
 
 config.autoAddCss = false;
 
@@ -22,6 +23,7 @@ const Home: NextPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const { data, isLoading, error } = api.task.get.useQuery();
   const trpc = api.useUtils();
+  const { toast } = useToast();
 
   const deleteMutation = api.task.delete.useMutation({
     onSuccess: (data) => {
@@ -66,7 +68,14 @@ const Home: NextPage = () => {
               <h2 className="px-8">{task.title}</h2>
               <p className="ml-auto px-8">{task.category}</p>
               <CheckIcon className="ml-auto" />
-              <button onClick={() => handleDeleteTask(task.id)}>
+              <button
+                onClick={() => {
+                  handleDeleteTask(task.id);
+                  toast({
+                    description: `Task ${task.title} complete!`,
+                  });
+                }}
+              >
                 <TrashIcon />
               </button>
             </CardHeader>
