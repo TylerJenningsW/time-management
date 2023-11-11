@@ -1,7 +1,10 @@
-import React from "react";
+import Image from 'next/image'
 
-const Logo: React.FC = () => (
-  <span className="text-xl font-bold text-white">Time Management App</span>
-);
+import logo from '../../../public/logo.png'
+function Logo() {
+  return (
+    <Image width={40} height={40} alt="time" src={logo}></Image>
+  )
+}
 
 export default Logo;

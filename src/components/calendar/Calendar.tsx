@@ -1,18 +1,9 @@
 import BaseCalendar from "./CalendarBase";
 import { api } from "~/utils/api";
-import React, { useState } from "react";
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Spinner,
-  useDisclosure,
-} from "@nextui-org/react";
+import React from "react";
 import { useSession } from "next-auth/react";
 import Loading from "../loading";
+import CustomToolbar from "./calendarToolbar";
 
 const components = {
   event: (props: any) => {
@@ -32,10 +23,6 @@ const components = {
 
 function Calendar() {
   const { data: session, status } = useSession();
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
-  const [showEventModal, setShowEventModal] = useState(false);
-
   const calendarQuery = api.calendar.getEvents.useQuery();
   if (!session?.user) {
     return (
@@ -58,47 +45,13 @@ function Calendar() {
 
   return (
     <>
-      <Button onPress={onOpen}>Open Modal</Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Modal Title
-              </ModalHeader>
-              <ModalBody>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Magna exercitation reprehenderit magna aute tempor cupidatat
-                  consequat elit dolor adipisicing. Mollit dolor eiusmod sunt ex
-                  incididunt cillum quis. Velit duis sit officia eiusmod Lorem
-                  aliqua enim laboris do dolor eiusmod. Et mollit incididunt
-                  nisi consectetur esse laborum eiusmod pariatur proident Lorem
-                  eiusmod et. Culpa deserunt nostrud ad veniam.
-                </p>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-      <BaseCalendar events={events} components={components} />
+      <BaseCalendar
+        events={events}
+        components={{
+          ...components,
+          toolbar: CustomToolbar
+        }}
+      />
     </>
   );
 }

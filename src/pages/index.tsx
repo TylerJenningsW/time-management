@@ -97,7 +97,7 @@ const Home: NextPage = () => {
           name="description"
           content="Time Management App for making better use of your time."
         />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/logo.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center gap-4 p-16">
         <AiButton></AiButton>
