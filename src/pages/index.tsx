@@ -13,6 +13,8 @@ import TrashIcon from "~/svgs/deleteIcon";
 import CheckIcon from "~/svgs/checkIcon";
 import AiButton from "~/components/aiButton";
 import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
+import { cn } from "@/lib/utils";
 
 config.autoAddCss = false;
 
@@ -70,10 +72,13 @@ const Home: NextPage = () => {
               <CheckIcon className="ml-auto" />
               <button
                 onClick={() => {
-                  handleDeleteTask(task.id);
                   toast({
+                    className: cn(
+                      "bottom-2 rounded z-[2147483647] w-[400px] max-h-[100px] right-0 flex fixed md:max-w-[420px] md:bottom-2 md:right-4 sm:bottom-2 sm:right-0"
+                    ),
                     description: `Task ${task.title} complete!`,
                   });
+                  handleDeleteTask(task.id);
                 }}
               >
                 <TrashIcon />

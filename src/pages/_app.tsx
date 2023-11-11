@@ -11,6 +11,7 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 
 import Navbar from "~/components/menu/navbar";
+import { Toaster } from "@/components/ui/toaster";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -20,6 +21,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session} refetchInterval={5 * 60}>
       <NextUIProvider>
         <NextThemesProvider attribute="class" defaultTheme="dark">
+          <Toaster />
           <Navbar />
           <Component {...pageProps} />
         </NextThemesProvider>
