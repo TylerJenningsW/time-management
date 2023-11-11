@@ -1,6 +1,6 @@
 import BaseCalendar from "./CalendarBase";
 import { api } from "~/utils/api";
-import React from "react";
+import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import Loading from "../loading";
 import CustomToolbar from "./calendarToolbar";
@@ -22,8 +22,18 @@ const components = {
 };
 
 function Calendar() {
+  const [error, setError] = useState<string | null>(null);
+  const [shouldFetch, setShouldFetch] = useState(true);
   const { data: session, status } = useSession();
-  const calendarQuery = api.calendar.getEvents.useQuery();
+  const { data, isLoading, isError, error: trpcError } = api.calendar.getEvents.useQuery(undefined, {
+    enabled: shouldFetch,
+    onError: (err) => {
+      setError(err.message);
+      if (err.message.includes('UNAUTHORIZED')) {
+        setShouldFetch(false);
+      }
+    },
+  });
   if (!session?.user) {
     return (
       <div className="flex min-h-screen flex-col items-center gap-4 p-16">
@@ -32,15 +42,15 @@ function Calendar() {
     );
   }
 
-  if (calendarQuery.isLoading) {
+  if (isLoading) {
     return <Loading />;
   }
 
-  if (calendarQuery.isError) {
-    return <div>Error: {calendarQuery.error.message}</div>;
+  if (isError) {
+    return <div>Error: {error}</div>;
   }
 
-  const events = calendarQuery.data;
+  const events = data;
   console.log("Events from API:", events);
 
   return (
