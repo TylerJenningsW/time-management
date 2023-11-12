@@ -3,6 +3,7 @@ import { google } from "googleapis";
 import { type OAuth2Client } from "google-auth-library";
 import { rrulestr } from "rrule";
 import { type GoogleEvent } from "~/types/types";
+import { env } from "~/env.mjs";
 
 
 async function fetchAllEvents(
@@ -64,10 +65,11 @@ export const calendarRouter = createTRPCRouter({
 
     if (!account) throw new Error("User not found");
 
-    const oauth2Client = new google.auth.OAuth2();
+    const oauth2Client = new google.auth.OAuth2(env.GOOGLE_CLIENT_ID, env.GOOGLE_CLIENT_SECRET, "http://localhost:3000/api/auth/callback/google" );
     oauth2Client.setCredentials({
       access_token: account.access_token,
       refresh_token: account.refresh_token,
+      
     });
 
     oauth2Client.on('tokens', async (tokens) => {
