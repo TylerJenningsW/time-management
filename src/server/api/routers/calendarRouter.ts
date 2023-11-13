@@ -139,14 +139,13 @@ export const calendarRouter = createTRPCRouter({
     .input(
       z.object({
         title: z.string(),
-        category: z.string(),
         startDateTime: z.string(),
         endDateTime: z.string(),
         description: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { title, category, startDateTime, endDateTime, description } =
+      const { title, startDateTime, endDateTime, description } =
         input;
       const account = await ctx.prisma.account.findFirst({
         where: {
@@ -187,6 +186,7 @@ export const calendarRouter = createTRPCRouter({
         },
       };
       try {
+        console.log("inserting")
         const response = await calendar.events.insert({
           calendarId: "primary",
           requestBody: event,
