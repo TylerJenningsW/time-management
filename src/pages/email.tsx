@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { api } from "~/utils/api";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 const formSchema = z.object({
   email: z.string().email({
     message: "Must contain a valid email address.",
@@ -29,6 +30,8 @@ const formSchema = z.object({
   }),
 });
 const EmailPage: NextPage = () => {
+  const { data: session, status } = useSession();
+
   const { toast } = useToast();
   const emailMutation = api.email.send.useMutation();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -68,6 +71,13 @@ const EmailPage: NextPage = () => {
     );
 
     console.log(values);
+  }
+  if (!session?.user) {
+    return (
+      <div className="flex min-h-screen flex-col items-center gap-4 p-16">
+        Sign In
+      </div>
+    );
   }
   return (
     <div className="flex min-h-screen flex-col items-center py-20 dark:bg-neutral-800">
