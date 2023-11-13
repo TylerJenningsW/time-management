@@ -1,12 +1,12 @@
 import {
   Button,
-  Divider,
   Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
   useDisclosure,
 } from "@nextui-org/react";
 import { api } from "~/utils/api";
@@ -18,7 +18,6 @@ function AiButton() {
   const [prompt, setPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const { toast } = useToast();
-
   const {
     isOpen: isAIOpen,
     onOpen: onAIOpen,
@@ -37,30 +36,28 @@ function AiButton() {
   const queryCredits = api.user.getCredits.useQuery();
   const credits = queryCredits.data;
   const handleModalOpen = () => {
-    if(Number(credits) > 99) {
+    if (Number(credits) > 99) {
       onAIOpen();
-    }
-    else {
+    } else {
       toast({
         className: cn(
           "bottom-2 rounded z-[2147483647] w-[400px] max-h-[100px] right-0 flex fixed md:max-w-[420px] md:bottom-2 md:right-4 sm:bottom-2 sm:right-0"
-          ),
-          description: `You do not have enough credits.`,
-        });
-      }
-  }
+        ),
+        description: `You do not have enough credits.`,
+      });
+    }
+  };
   const handleOnClick = () => {
-    if(Number(credits) > 99) {
+    if (Number(credits) > 99) {
       chatMutation.mutate({ text: prompt });
-    }
-    else {
+    } else {
       toast({
         className: cn(
           "bottom-2 rounded z-[2147483647] w-[400px] max-h-[100px] right-0 flex fixed md:max-w-[420px] md:bottom-2 md:right-4 sm:bottom-2 sm:right-0"
-          ),
-          description: `You do not have enough credits.`,
-        });
-      }
+        ),
+        description: `You do not have enough credits.`,
+      });
+    }
   };
   return (
     <>
@@ -75,6 +72,11 @@ function AiButton() {
           <ModalHeader>Chat with AI</ModalHeader>
           <ModalBody>
             {aiResponse && <p>{aiResponse}</p>}
+            {chatMutation.isLoading && (
+              <p>
+                Loading... <Spinner />
+              </p>
+            )}
             <Input
               fullWidth
               label="Ask the AI"
