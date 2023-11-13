@@ -13,7 +13,7 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import CreateTask from "./createTask";
 const POMODORO_TIME = 25 * 60;
 const SHORT_BREAK = 5 * 60;
@@ -26,6 +26,7 @@ function Timer() {
   const [isPomodoroMode, setIsPomodoroMode] = useState(true);
   const [customTime, setCustomTime] = useState(0);
   const { data: session, status } = useSession();
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const startTimer = () => {
     setIsEnabled(true);
@@ -62,6 +63,8 @@ function Timer() {
       }, 1000);
     } else if (isEnabled && timeLeft <= 0) {
       clearInterval(interval);
+      audioRef.current?.play();
+
       if (isPomodoroMode) {
         if (cycles < 3) {
           setTimeLeft(SHORT_BREAK);
@@ -91,69 +94,69 @@ function Timer() {
       setTimeLeft(customTime);
     }
   };
-  function handleCreateTask() {
-    // todo
-  }
-  const categories = [{ value: "Work" }, { value: "School" }];
 
   return (
-    <Card className="flex w-2/4 gap-4 rounded border-black bg-neutral-300 p-4 dark:bg-neutral-600">
-      <CardHeader className="flex h-12 gap-3">
-        <button onClick={startTimer}>
-          <FontAwesomeIcon
-            icon={faPlay}
-            className="text-blue-500 hover:text-blue-700"
-          />
-        </button>
-        <button onClick={pauseTimer}>
-          <FontAwesomeIcon
-            icon={faPause}
-            className="text-blue-500 hover:text-blue-700"
-          />
-        </button>
-        <button onClick={resetTimer}>
-          <FontAwesomeIcon
-            icon={faRedo}
-            className="text-blue-500 hover:text-blue-700"
-          />
-        </button>
-        {!isPomodoroMode && (
-          <>
-            <label className="font-bold ml-auto" htmlFor="customTime">
-              Set Time (minutes):
-            </label>
-            <Input
-              type="number"
-              id="customTime"
-              value={String(customTime / 60)}
-              onChange={(e) => {
-                setCustomTime(e.target.valueAsNumber * 60);
-                setTimeLeft(e.target.valueAsNumber * 60);
-              }}
-              className="h-12 w-24 rounded p-2"
+    <>
+      <Card className="flex w-2/4 gap-4 rounded border-black bg-neutral-300 p-4 dark:bg-neutral-600">
+        <CardHeader className="flex h-12 gap-3">
+          <button onClick={startTimer}>
+            <FontAwesomeIcon
+              icon={faPlay}
+              className="text-blue-500 hover:text-blue-700"
             />
-          </>
-        )}
-      </CardHeader>
-      <Divider />
-      <CardBody className="flex flex-row">
-        <p className="font-bold px-4">{formatTime(timeLeft)}</p>
-        <p className="ml-auto mr-4 font-bold">Pomodoro</p>
-        <Checkbox
-          defaultSelected
-          type="checkbox"
-          id="pomodoro"
-          name="vehicle1"
-          value="pomodoro"
-          className="max-w-md"
-          checked={isPomodoroMode}
-          onChange={handlePomodoroChange}
-          size="sm"
-        />
-      </CardBody>
-      <Divider />
-      <CreateTask/>
-    </Card>
+          </button>
+          <button onClick={pauseTimer}>
+            <FontAwesomeIcon
+              icon={faPause}
+              className="text-blue-500 hover:text-blue-700"
+            />
+          </button>
+          <button onClick={resetTimer}>
+            <FontAwesomeIcon
+              icon={faRedo}
+              className="text-blue-500 hover:text-blue-700"
+            />
+          </button>
+          <h1></h1>
+          {!isPomodoroMode && (
+            <>
+              <label className="ml-auto font-bold" htmlFor="customTime">
+                Set Time (minutes):
+              </label>
+              <Input
+                type="number"
+                id="customTime"
+                value={String(customTime / 60)}
+                onChange={(e) => {
+                  setCustomTime(e.target.valueAsNumber * 60);
+                  setTimeLeft(e.target.valueAsNumber * 60);
+                }}
+                className="h-12 w-24 rounded p-2"
+              />
+            </>
+          )}
+        </CardHeader>
+        <Divider />
+        <CardBody className="flex flex-row">
+          <p className="px-4 font-bold">{formatTime(timeLeft)}</p>
+          <p className="ml-auto mr-4 font-bold">Pomodoro</p>
+          <Checkbox
+            defaultSelected
+            type="checkbox"
+            id="pomodoro"
+            name="vehicle1"
+            value="pomodoro"
+            className="max-w-md"
+            checked={isPomodoroMode}
+            onChange={handlePomodoroChange}
+            size="sm"
+          />
+        </CardBody>
+        <Divider />
+        <CreateTask />
+      </Card>
+      <audio ref={audioRef} src="/alarm.mp3" preload="auto"></audio>
+    </>
   );
 }
 
