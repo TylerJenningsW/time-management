@@ -23,6 +23,8 @@ module.exports = {
     },
     extend: {
       colors: {
+        'custom-color': 'hsl(339, 90%, 61%)',
+        'custom-color2': 'hsl(339, 90%, 71%)',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
