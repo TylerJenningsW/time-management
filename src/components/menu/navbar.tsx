@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Logo from "./mainTitle";
 import NavLink from "./navlink";
 import LoginButton from "./login";
@@ -10,9 +10,21 @@ import NavDropdown from "./dropDownMenu";
 import { api } from "~/utils/api";
 
 function Navbar() {
+  const [error, setError] = useState<string | null>(null);
+  const [shouldFetch, setShouldFetch] = useState(true);
+
   const session = useSession();
   const isLoggedIn = session.data?.user;
-  const queryCredits = api.user.getCredits.useQuery();
+  const queryCredits = api.user.getCredits.useQuery(undefined, {
+    enabled: shouldFetch,
+    onError: (err) => {
+      console.log(err.message)
+      setError(err.message);
+      if (err.message.includes('UNAUTHORIZED')) {
+        setShouldFetch(false);
+      }
+    },
+  });
   const credits = queryCredits.data
   return (
     <nav className="bg-blue-700">

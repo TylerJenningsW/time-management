@@ -54,9 +54,12 @@ const Home: NextPage = () => {
   }, [data]);
   let content;
 
-  if (isLoading || loading) {
+  if (isLoading) {
     content = <Loading />;
-  } else if (error) {
+  } else if (error?.message.includes('UNAUTHORIZED')) {
+    content = <></>
+  }
+  else if (error) {
     content = <div>An error occurred: {error.message}</div>;
   } else {
     content = (
