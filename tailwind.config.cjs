@@ -23,8 +23,10 @@ module.exports = {
     },
     extend: {
       colors: {
-        'custom-color': 'hsl(339, 90%, 61%)',
-        'custom-color2': 'hsl(339, 90%, 71%)',
+        'close-button-text-color': 'hsl(339, 90%, 61%)',
+        'close-button-text-color-hover': 'hsl(339, 90%, 71%)',
+        'close-button-bg': 'hsl(340, 85%, 10%)',
+        'close-button-bg-hover': 'hsl(340, 85%, 20%)',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

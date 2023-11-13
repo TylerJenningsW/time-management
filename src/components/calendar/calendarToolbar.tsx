@@ -26,14 +26,21 @@ const formSchema = z.object({
   title: z.string().min(2, {
     message: "The title must be at least two characters.",
   }),
+  startDate: z.date(),
+  endDate: z.date(),
 });
 const CustomToolbar: React.FC<ToolbarProps> = (toolbar) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [startSelectedDate, setStartSelectedDate] = useState<
+    Date | undefined
+  >();
+  const [endSelectedDate, setEndSelectedDate] = useState<Date | undefined>();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
+      startDate: new Date(),
+      endDate: new Date(),
     },
   });
 
@@ -53,8 +60,11 @@ const CustomToolbar: React.FC<ToolbarProps> = (toolbar) => {
   const goToCurrent = () => {
     toolbar.onNavigate(Navigate.TODAY);
   };
-  const handleDateSelect = (date: Date | undefined) => {
-    setSelectedDate(date);
+  const handleStartDateSelect = (date: Date | undefined) => {
+    setStartSelectedDate(date);
+  };
+  const handleEndDateSelect = (date: Date | undefined) => {
+    setEndSelectedDate(date);
   };
 
   const viewButtons = (
@@ -94,7 +104,7 @@ const CustomToolbar: React.FC<ToolbarProps> = (toolbar) => {
       <Modal isOpen={isModalOpen} onOpenChange={setIsModalOpen}>
         <ModalContent
           className={cn(
-            "z-[21] flex h-1/2 w-[600px] flex-col gap-4 rounded bg-neutral-800 p-4"
+            "z-[21] flex h-[550px] w-[600px] flex-col gap-4 rounded bg-neutral-800 p-4"
           )}
         >
           <ModalTitle asChild>
@@ -114,32 +124,72 @@ const CustomToolbar: React.FC<ToolbarProps> = (toolbar) => {
                     <FormItem>
                       <FormLabel>Title:</FormLabel>
                       <FormControl>
-                        <Input className="bg-neutral-900"
+                        <Input
+                          className="bg-neutral-900"
                           placeholder="John Doe's birthday..."
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription className="font-italic">
+                      <FormDescription className=" text-xs italic">
                         The title of the calendar event.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit">Submit</Button>
+                <FormField
+                  control={form.control}
+                  name="startDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Start Date:</FormLabel>
+                      <br />
+                      <FormControl>
+                        <DatePicker
+                          onDateSelect={handleStartDateSelect}
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="endDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End Date:</FormLabel>
+                      <br />
+                      <FormControl>
+                        <DatePicker
+                          onDateSelect={handleEndDateSelect}
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
               </form>
             </Form>
           </FormProvider>
+          <Divider />
+          <div className="flex ml-auto gap-4">
 
-          <DatePicker onDateSelect={handleDateSelect} />
+          <ModalTrigger
+            className="w-[80px] gap-4 space-x-8 rounded bg-blue-700 hover:bg-blue-600 px-4 py-2 ml-auto mt-auto"
+            type="submit"
+            >
+            Submit
+          </ModalTrigger>
           <ModalClose
-            className="bg-[#310413] px-4 py-2 text-custom-color ml-auto mt-auto hover: w-[80px]"
+            className="ml-auto mt-auto w-[80px] rounded bg-close-button-bg px-4 py-2 text-close-button-text-color hover:bg-close-button-bg-hover hover:text-close-button-text-color-hover"
             onClick={() => {
               setIsModalOpen(false);
             }}
-          >
+            >
             Close
           </ModalClose>
+            </div>
         </ModalContent>
       </Modal>
     </>
