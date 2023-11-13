@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -9,23 +9,28 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
+import { api } from "~/utils/api";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 const formSchema = z.object({
   email: z.string().email({
     message: "Must contain a valid email address.",
   }),
   subject: z.string().min(2, {
-    message: "The subject must be at least two characters long."
+    message: "The subject must be at least two characters long.",
   }),
   text: z.string().min(2, {
-    message: "Te text must be at least two characters long."
+    message: "Te text must be at least two characters long.",
   }),
-})
+});
 const EmailPage: NextPage = () => {
+  const { toast } = useToast();
+  const emailMutation = api.email.send.useMutation();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,59 +38,91 @@ const EmailPage: NextPage = () => {
       subject: "",
       text: "",
     },
-  })
- 
+  });
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+    emailMutation.mutate(
+      {
+        to: values.email,
+        subject: values.subject,
+        text: values.text,
+      },
+      {
+        onSuccess: () => {
+          toast({
+            className: cn(
+              "bottom-2 rounded z-[2147483647] w-[400px] max-h-[100px] right-0 flex fixed md:max-w-[420px] md:bottom-2 md:right-4 sm:bottom-2 sm:right-0"
+            ),
+            description: `Email sent.`,
+          });
+        },
+        onError: (error) => {
+          toast({
+            className: cn(
+              "bottom-2 rounded z-[2147483647] w-[400px] max-h-[100px] right-0 flex fixed md:max-w-[420px] md:bottom-2 md:right-4 sm:bottom-2 sm:right-0"
+            ),
+            description: `Email failed to send due to ${error}.`,
+          });
+        },
+      }
+    );
+
+    console.log(values);
   }
   return (
-    <div className="dark:bg-neutral-800 flex flex-col min-h-screen items-center py-20">
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="bg-neutral-700  w-1/4 border-solid rounded  p-4 space-y-8">
-      <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email To:</FormLabel>
-              <FormControl className="">
-                <Input placeholder="example@gmail.com..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="subject"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Subject:</FormLabel>
-              <FormControl className="">
-                <Input placeholder="Question about..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="text"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Text:</FormLabel>
-              <FormControl className="">
-                <Textarea placeholder="Hey there..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+    <div className="flex min-h-screen flex-col items-center py-20 dark:bg-neutral-800">
+      <FormProvider {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-1/4  space-y-8 rounded border-solid  bg-neutral-700 p-4"
+        >
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email To:</FormLabel>
+                <FormControl className="">
+                  <Input placeholder="example@gmail.com..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="subject"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Subject:</FormLabel>
+                <FormControl className="">
+                  <Input placeholder="Question about..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="text"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Text:</FormLabel>
+                <FormControl className="">
+                  <Textarea placeholder="Hey there..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <button
+            className="ml-auto mt-auto w-[80px] gap-4 space-x-8 rounded bg-blue-700 px-4 py-2 hover:bg-blue-600"
+            type="submit"
+          >
+            Submit
+          </button>
+        </form>
+      </FormProvider>
     </div>
   );
 };

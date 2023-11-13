@@ -51,6 +51,7 @@ function AiButton() {
   }
   const handleOnClick = () => {
     if(Number(credits) > 99) {
+      chatMutation.mutate({ text: prompt });
     }
     else {
       toast({
@@ -60,7 +61,6 @@ function AiButton() {
           description: `You do not have enough credits.`,
         });
       }
-      chatMutation.mutate({ text: prompt });
   };
   return (
     <>
@@ -74,6 +74,7 @@ function AiButton() {
         <ModalContent>
           <ModalHeader>Chat with AI</ModalHeader>
           <ModalBody>
+            {aiResponse && <p>{aiResponse}</p>}
             <Input
               fullWidth
               label="Ask the AI"
@@ -81,7 +82,6 @@ function AiButton() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
             />
-            {aiResponse && <p>{aiResponse}</p>}
           </ModalBody>
           <ModalFooter>
             <Button color="danger" variant="flat" onPress={onAIClose}>

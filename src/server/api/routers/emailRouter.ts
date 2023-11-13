@@ -2,23 +2,44 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import nodemailer from "nodemailer";
-
+import { google } from "googleapis";
+import { env } from "~/env.mjs";
+const oauth2Client = new google.auth.OAuth2(
+  env.GOOGLE_CLIENT_ID,
+  env.GOOGLE_CLIENT_SECRET,
+  "http://localhost:3000/api/auth/callback/google"
+);
 export const emailRouter = createTRPCRouter({
-  hello: protectedProcedure
+  send: protectedProcedure
     .input(z.object({ to: z.string(), subject: z.string(), text: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const session = ctx.session;
       const account = await ctx.prisma.account.findFirst({
         where: {
           userId: ctx.session?.user.id,
           provider: "google",
         },
       });
-      const accessToken = account?.access_token;
+
+      if (!account) throw new Error("User not found");
       const email = ctx.session.user.email?.toString()
-      if (!account || !session || !accessToken) {
-        throw new Error("Unauthorized");
-      }
+
+      oauth2Client.setCredentials({ 
+        access_token: account.access_token,
+        refresh_token: account.refresh_token,
+      });
+
+      oauth2Client.on("tokens", async (tokens) => {
+        if (tokens.refresh_token) {
+          await ctx.prisma.account.update({
+            where: { id: account.id },
+            data: { refresh_token: tokens.refresh_token },
+          });
+        }
+        await ctx.prisma.account.update({
+          where: { id: account.id },
+          data: { access_token: tokens.access_token },
+        });
+      });
       const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 465,
@@ -26,7 +47,7 @@ export const emailRouter = createTRPCRouter({
         auth: {
           type: "OAuth2",
           user: email,
-          accessToken: accessToken,
+          accessToken: account.access_token?.toString(),
         },
       });
 
