@@ -81,7 +81,7 @@ const Home: NextPage = () => {
                   handleDeleteTask(task.id);
                 }}
               >
-                <TrashIcon />
+                <CheckIcon />
               </button>
             </CardHeader>
           </Card>

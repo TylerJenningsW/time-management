@@ -52,7 +52,6 @@ function CreateTask() {
   return (
     <>
       <CardFooter className="items-center gap-8">
-        <form></form>
         <Input
           className=""
           type="text"

@@ -11,10 +11,13 @@ import {
 } from "@nextui-org/react";
 import { api } from "~/utils/api";
 import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 
 function AiButton() {
   const [prompt, setPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
+  const { toast } = useToast();
 
   const {
     isOpen: isAIOpen,
@@ -31,15 +34,38 @@ function AiButton() {
       setAiResponse("Failed to get response from AI.");
     },
   });
-
+  const queryCredits = api.user.getCredits.useQuery();
+  const credits = queryCredits.data;
+  const handleModalOpen = () => {
+    if(Number(credits) > 99) {
+      onAIOpen();
+    }
+    else {
+      toast({
+        className: cn(
+          "bottom-2 rounded z-[2147483647] w-[400px] max-h-[100px] right-0 flex fixed md:max-w-[420px] md:bottom-2 md:right-4 sm:bottom-2 sm:right-0"
+          ),
+          description: `You do not have enough credits.`,
+        });
+      }
+  }
   const handleOnClick = () => {
-    chatMutation.mutate({ text: prompt });
-    
+    if(Number(credits) > 99) {
+    }
+    else {
+      toast({
+        className: cn(
+          "bottom-2 rounded z-[2147483647] w-[400px] max-h-[100px] right-0 flex fixed md:max-w-[420px] md:bottom-2 md:right-4 sm:bottom-2 sm:right-0"
+          ),
+          description: `You do not have enough credits.`,
+        });
+      }
+      chatMutation.mutate({ text: prompt });
   };
   return (
     <>
       <button
-        onClick={onAIOpen}
+        onClick={handleModalOpen}
         className="absolute left-[-36px] top-1/2 z-10 -translate-y-1/2 -rotate-90 transform rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-300"
       >
         AI Chatbot

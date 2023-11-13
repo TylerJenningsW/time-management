@@ -70,9 +70,6 @@ export default function NavDropdown() {
                 <Button color="danger" variant="flat" onPress={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onPress={onClose}>
-                  Save
-                </Button>
               </ModalFooter>
             </>
           )}
