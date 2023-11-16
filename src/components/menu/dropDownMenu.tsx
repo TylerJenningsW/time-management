@@ -32,7 +32,7 @@ export default function NavDropdown() {
   } = useDisclosure();
   return (
     <>
-      <Dropdown className="bg-black">
+      <Dropdown className="bg-black text-white">
         <DropdownTrigger>
           <Button className="text-md rounded-md bg-blue-700 px-0 py-2 font-medium text-white hover:bg-blue-900 hover:text-white">
             Account

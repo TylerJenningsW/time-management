@@ -7,7 +7,7 @@ import {
 
 export function FAQItem() {
   return (
-    <Accordion type="single" collapsible className="w-full">
+    <Accordion type="single" collapsible className="bg-neutral-300 dark:bg-neutral-600 w-full">
       <AccordionItem value="item-1">
         <AccordionTrigger>What is the Pomodoro Technique?</AccordionTrigger>
         <AccordionContent>

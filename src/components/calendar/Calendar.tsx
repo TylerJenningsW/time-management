@@ -68,7 +68,7 @@ function Calendar() {
   return (
     <>
       <BaseCalendar
-      className="mt-16"
+      className="mt-16 backdrop-blur-sm"
         events={events}
         components={{
           ...components,

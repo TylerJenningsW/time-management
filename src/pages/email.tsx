@@ -66,7 +66,7 @@ const EmailPage: NextPage = () => {
         onSuccess: () => {
           toast({
             className: cn(
-              "bottom-2 rounded z-[2147483647] w-[400px] max-h-[100px] right-0 flex fixed md:max-w-[420px] md:bottom-2 md:right-4 sm:bottom-2 sm:right-0"
+              "bottom-2 text-white rounded z-[2147483647] w-[400px] max-h-[100px] right-0 flex fixed md:max-w-[420px] md:bottom-2 md:right-4 sm:bottom-2 sm:right-0"
             ),
             description: `Email sent.`,
           });
@@ -92,11 +92,11 @@ const EmailPage: NextPage = () => {
     );
   }
   return (
-    <div className=" mt-16 flex min-h-screen flex-col items-center py-20 dark:bg-neutral-800">
+    <div className="  mt-16 flex min-h-screen flex-col items-center py-20">
       <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-1/4  space-y-8 rounded border-solid  bg-neutral-700 p-4"
+          className="w-1/4  space-y-8 rounded border-solid bg-neutral-300 dark:bg-neutral-600 p-4"
         >
           <FormField
             control={form.control}

@@ -133,7 +133,7 @@ const CustomToolbar: React.FC<ToolbarProps> = (toolbar) => {
       <Modal isOpen={isModalOpen} onOpenChange={setIsModalOpen}>
         <ModalContent
           className={cn(
-            "z-[21] flex h-[600px] w-[600px] flex-col gap-4 rounded bg-neutral-800 p-4"
+            "z-[21] flex h-[600px] w-[600px] flex-col gap-4 rounded bg-neutral-300 dark:bg-neutral-600 p-4"
           )}
         >
           <ModalTitle asChild>

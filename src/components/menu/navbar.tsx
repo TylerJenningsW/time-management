@@ -57,7 +57,7 @@ function Navbar() {
                   <p className="mb-2 ml-auto text-white">
                     {session.data?.user.name}
                   </p>
-                  <p className="font-bold mb-2 items-center justify-center">Credits: {credits}</p>
+                  <p className=" text-md text-white mb-2 items-center justify-center">Credits: {credits}</p>
                   </>
                 ))}
               {!isLoggedIn && (

@@ -70,14 +70,15 @@ const Home: NextPage = () => {
             key={task.id}
           >
             <CardHeader>
-              <h2 className="px-8">{task.title}</h2>
-              <p className="ml-auto px-8">{task.category}</p>
-              <CheckIcon className="ml-auto" />
-              <button
+              <div className="flex w-3/4">
+                <h2 className="px-8">{task.title}</h2>
+                <p className="ml-auto px-8">{task.category}</p>
+              </div>
+              <button className="ml-auto"
                 onClick={() => {
                   toast({
                     className: cn(
-                      "bottom-2 rounded z-[2147483647] w-[400px] max-h-[100px] right-0 flex fixed md:max-w-[420px] md:bottom-2 md:right-4 sm:bottom-2 sm:right-0"
+                      "text-white bottom-2 rounded z-[2147483647] w-[400px] max-h-[100px] right-0 flex fixed md:max-w-[420px] md:bottom-2 md:right-4 sm:bottom-2 sm:right-0"
                     ),
                     description: `Task ${task.title} complete!`,
                   });
