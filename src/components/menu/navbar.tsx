@@ -39,6 +39,7 @@ function Navbar() {
                 <NavLink href="/">Home</NavLink>
                 <NavLink href="/email">Email</NavLink>
                 <NavLink href="/calendar">Calendar</NavLink>
+                <NavLink href="/faq">FAQ</NavLink>
                 <LoginButton />
               </div>
             </div>
