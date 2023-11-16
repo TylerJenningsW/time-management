@@ -89,7 +89,7 @@ function AiButton() {
             <Button color="danger" variant="flat" onPress={onAIClose}>
               Close
             </Button>
-            <Button onClick={handleOnClick}>Submit</Button>
+            <Button isDisabled={chatMutation.isLoading} onClick={handleOnClick}>Submit</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
