@@ -63,7 +63,7 @@ function AiButton() {
     <>
       <button
         onClick={handleModalOpen}
-        className="absolute left-[-36px] top-1/2 z-10 -translate-y-1/2 -rotate-90 transform rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-300"
+        className="absolute left-[-56px] top-1/2 z-10 -translate-y-1/2 -rotate-90 transform rounded bg-blue-500 px-8 py-4 text-2xl text-white hover:bg-blue-300"
       >
         AI Chatbot
       </button>
