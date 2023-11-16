@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 body {
-  @apply bg-neutral-100 dark:bg-neutral-800 dark:text-gray-100;
+  @apply bg-neutral-100 dark:bg-neutral-800 dark:text-gray-100 bg-no-repeat bg-cover;
+  background-image: url('/topography_updated.svg');
 }
 
 .rbc-calendar {
