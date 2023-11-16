@@ -1,18 +1,13 @@
 import { faPause, faPlay, faRedo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   Checkbox,
   Divider,
   Input,
-  Select,
-  SelectItem,
 } from "@nextui-org/react";
-import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import CreateTask from "./createTask";
 const POMODORO_TIME = 25 * 60;
@@ -25,7 +20,6 @@ function Timer() {
   const [cycles, setCycles] = useState(0);
   const [isPomodoroMode, setIsPomodoroMode] = useState(true);
   const [customTime, setCustomTime] = useState(0);
-  const { data: session, status } = useSession();
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const startTimer = () => {
@@ -97,7 +91,7 @@ function Timer() {
 
   return (
     <>
-      <Card className="flex w-2/4 gap-4 rounded border-black bg-neutral-300 p-4 dark:bg-neutral-600">
+      <Card className="flex w-2/4 gap-4 rounded border-black bg-neutral-300 p-4 dark:bg-neutral-600 mt-20">
         <CardHeader className="flex h-12 gap-3">
           <button onClick={startTimer}>
             <FontAwesomeIcon
@@ -117,7 +111,6 @@ function Timer() {
               className="text-blue-500 hover:text-blue-700"
             />
           </button>
-          <h1></h1>
           {!isPomodoroMode && (
             <>
               <label className="ml-auto font-bold" htmlFor="customTime">

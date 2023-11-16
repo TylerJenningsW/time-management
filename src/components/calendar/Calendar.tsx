@@ -36,7 +36,7 @@ function Calendar() {
   });
   if (!session?.user) {
     return (
-      <div className="flex min-h-screen flex-col items-center gap-4 p-16">
+      <div className="mt-16 flex min-h-screen flex-col items-center gap-4 p-16">
         Sign In
       </div>
     );
@@ -56,6 +56,7 @@ function Calendar() {
   return (
     <>
       <BaseCalendar
+      className="mt-16"
         events={events}
         components={{
           ...components,

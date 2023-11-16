@@ -80,7 +80,7 @@ const EmailPage: NextPage = () => {
     );
   }
   return (
-    <div className="flex min-h-screen flex-col items-center py-20 dark:bg-neutral-800">
+    <div className=" mt-16 flex min-h-screen flex-col items-center py-20 dark:bg-neutral-800">
       <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
