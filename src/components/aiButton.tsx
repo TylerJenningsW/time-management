@@ -1,11 +1,13 @@
 import {
   Button,
+  Divider,
   Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spacer,
   Spinner,
   useDisclosure,
 } from "@nextui-org/react";
@@ -67,29 +69,33 @@ function AiButton() {
       >
         AI Chatbot
       </button>
-      <Modal isOpen={isAIOpen} onClose={onAIClose} placement="top-center">
+      <Modal className=" h-[400px] max-h-[400px]" isOpen={isAIOpen} onClose={onAIClose} placement="top-center">
         <ModalContent>
           <ModalHeader>Chat with AI</ModalHeader>
-          <ModalBody>
+          <ModalBody className="break-words max-h-1/4 overflow-x-hidden overflow-y-scroll">
             {aiResponse && <p>{aiResponse}</p>}
             {chatMutation.isLoading && (
               <p>
                 Loading... <Spinner />
               </p>
             )}
-            <Input
+
+          </ModalBody>
+          <ModalFooter className="flex flex-col">
+          <Input
               fullWidth
               label="Ask the AI"
               placeholder="Type your prompt here..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
             />
-          </ModalBody>
-          <ModalFooter>
+            <div className="ml-auto">
+
             <Button color="danger" variant="flat" onPress={onAIClose}>
               Close
             </Button>
-            <Button isDisabled={chatMutation.isLoading} onClick={handleOnClick}>Submit</Button>
+            <Button className="ml-2" isDisabled={chatMutation.isLoading} onClick={handleOnClick}>Submit</Button>
+            </div>
           </ModalFooter>
         </ModalContent>
       </Modal>
