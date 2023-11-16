@@ -1,9 +1,7 @@
 import { type NextPage } from "next";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from "@/components/ui/button";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -18,6 +16,9 @@ import { api } from "~/utils/api";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+
 const formSchema = z.object({
   email: z.string().email({
     message: "Must contain a valid email address.",
@@ -30,10 +31,21 @@ const formSchema = z.object({
   }),
 });
 const EmailPage: NextPage = () => {
+  const router = useRouter();
+
   const { data: session, status } = useSession();
 
   const { toast } = useToast();
   const emailMutation = api.email.send.useMutation();
+  useEffect(() => {
+    if (status === 'loading') {
+      return;
+    }
+
+    if (status === 'unauthenticated') {
+      router.push('/api/auth/signin?callbackUrl=' + window.location.href);
+    }
+  }, [session, status, router]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

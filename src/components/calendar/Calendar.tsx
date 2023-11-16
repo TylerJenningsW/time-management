@@ -1,9 +1,10 @@
 import BaseCalendar from "./CalendarBase";
 import { api } from "~/utils/api";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Loading from "../loading";
 import CustomToolbar from "./calendarToolbar";
+import { useRouter } from "next/router";
 
 const components = {
   event: (props: any) => {
@@ -22,6 +23,8 @@ const components = {
 };
 
 function Calendar() {
+  const router = useRouter();
+
   const [error, setError] = useState<string | null>(null);
   const [shouldFetch, setShouldFetch] = useState(true);
   const { data: session, status } = useSession();
@@ -34,6 +37,15 @@ function Calendar() {
       }
     },
   });
+  useEffect(() => {
+    if (status === 'loading') {
+      return;
+    }
+
+    if (status === 'unauthenticated') {
+      router.push('/api/auth/signin?callbackUrl=' + window.location.href);
+    }
+  }, [session, status, router]);
   if (!session?.user) {
     return (
       <div className="mt-16 flex min-h-screen flex-col items-center gap-4 p-16">
