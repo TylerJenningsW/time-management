@@ -1,10 +1,12 @@
 import BaseCalendar from "./CalendarBase";
 import { api } from "~/utils/api";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import Loading from "../loading";
 import CustomToolbar from "./calendarToolbar";
 import { useRouter } from "next/router";
+import { type SlotInfo } from "react-big-calendar";
+import EventModal from "./eventModal";
 
 const components = {
   event: (props: any) => {
@@ -12,8 +14,7 @@ const components = {
     switch (eventType) {
       default:
         return (
-          <div
-            style={{ background: "darkblue", color: "white", height: "100%" }}
+          <div className="bg-blue-700 font-bold text-white"
           >
             {props.title}
           </div>
@@ -24,6 +25,9 @@ const components = {
 
 function Calendar() {
   const router = useRouter();
+  const clickRef = useRef<number | undefined>(undefined);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [slotInfo, setSlotInfo] = useState<SlotInfo>();
 
   const [error, setError] = useState<string | null>(null);
   const [shouldFetch, setShouldFetch] = useState(true);
@@ -46,6 +50,33 @@ function Calendar() {
       router.push('/api/auth/signin?callbackUrl=' + window.location.href);
     }
   }, [session, status, router]);
+  useEffect(() => {
+    /**
+     * What Is This?
+     * This is to prevent a memory leak, in the off chance that you
+     * teardown your interface prior to the timed method being called.
+     */
+    return () => {
+      window.clearTimeout(clickRef?.current)
+    }
+  }, [])
+  
+  const onSelectSlot = useCallback((slotInfo: SlotInfo) => {
+    /**
+     * Here we are waiting 250 milliseconds prior to firing
+     * our method. Why? Because both 'click' and 'doubleClick'
+     * would fire, in the event of a 'doubleClick'. By doing
+     * this, the 'click' handler is overridden by the 'doubleClick'
+     * action.
+     */
+    window.clearTimeout(clickRef?.current)
+    clickRef.current = window.setTimeout(() => { 
+      setSlotInfo(slotInfo)
+      setIsModalOpen(true);
+    }, 250)
+  }, [])
+
+  const defaultDate = useMemo(() => new Date(2015, 3, 1), [])
   if (!session?.user) {
     return (
       <div className="mt-16 flex min-h-screen flex-col items-center gap-4 p-16">
@@ -74,7 +105,14 @@ function Calendar() {
           ...components,
           toolbar: CustomToolbar
         }}
+        onSelectSlot={onSelectSlot}
+        selectable
       />
+      
+      <EventModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        slotInfo={slotInfo} />
     </>
   );
 }

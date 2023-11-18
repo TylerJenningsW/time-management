@@ -12,9 +12,17 @@ body {
 }
 
 .rbc-calendar .rbc-toolbar button {
-  @apply dark:text-white;
+  @apply dark:text-white font-bold;
 }
-
+.rbc-toolbar-label {
+  @apply font-bold
+}
+.rbc-button-link {
+  @apply font-bold
+}
+.rbc-header {
+  @apply font-bold
+}
 .rbc-calendar .rbc-toolbar .rbc-active {
   @apply dark:text-black;
 

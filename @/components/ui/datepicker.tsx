@@ -9,8 +9,9 @@ export type CalendarProps = React.ComponentProps<typeof DatePicker>
 
 interface DatePickerProps {
   onDateSelect: (date: Date | null) => void;
+  defaultDate: Date | undefined;
 }
-export function Calendar({ onDateSelect }: DatePickerProps) {
+export function MiniCalendar({ onDateSelect, defaultDate }: DatePickerProps) {
   const [date, setDate] = useState<Date | null>(new Date() as Date);
   const handleChange = (selectedDate: Date | null) => {
     setDate(selectedDate);
@@ -20,7 +21,7 @@ export function Calendar({ onDateSelect }: DatePickerProps) {
   return (
     <DatePicker
     showTimeSelect={true}
-    selected={date}
+    selected={defaultDate || date}
     onChange={handleChange}
       className={cn("p-3 z-[2147483647]")}
     />
