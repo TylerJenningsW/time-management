@@ -145,8 +145,7 @@ export const calendarRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { title, startDateTime, endDateTime, description } =
-        input;
+      const { title, startDateTime, endDateTime, description } = input;
       const account = await ctx.prisma.account.findFirst({
         where: {
           userId: ctx.session?.user.id,
@@ -186,7 +185,7 @@ export const calendarRouter = createTRPCRouter({
         },
       };
       try {
-        console.log("inserting")
+        console.log("inserting");
         const response = await calendar.events.insert({
           calendarId: "primary",
           requestBody: event,
@@ -194,6 +193,49 @@ export const calendarRouter = createTRPCRouter({
         return response.data;
       } catch (error) {
         console.error("Error adding event:", error);
+        throw error;
+      }
+    }),
+    deleteEvent: protectedProcedure
+    .input(z.object({ eventId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { eventId } = input;
+
+      const account = await ctx.prisma.account.findFirst({
+        where: {
+          userId: ctx.session?.user.id,
+          provider: "google",
+        },
+      });
+
+      if (!account) throw new Error("User not found");
+
+      oauth2Client.setCredentials({
+        access_token: account.access_token,
+        refresh_token: account.refresh_token,
+      });
+
+      oauth2Client.on("tokens", async (tokens) => {
+        if (tokens.refresh_token) {
+          await ctx.prisma.account.update({
+            where: { id: account.id },
+            data: { refresh_token: tokens.refresh_token },
+          });
+        }
+        await ctx.prisma.account.update({
+          where: { id: account.id },
+          data: { access_token: tokens.access_token },
+        });
+      });
+
+      try {
+        await calendar.events.delete({
+          calendarId: 'primary',
+          eventId: eventId,
+        });
+        return { success: true };
+      } catch (error) {
+        console.error("Error deleting event:", error);
         throw error;
       }
     }),
