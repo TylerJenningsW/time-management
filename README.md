@@ -1,28 +1,64 @@
-# Create T3 App
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+# ⏰ Time Management App
 
-## What's next? How do I make an app with this?
+Welcome to the **Time Management** app, designed to help you stay on top of your tasks, deadlines, and priorities! 🎯
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## ✨ Features
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+- 🗓 **Task Scheduling**: Organize your day with detailed task scheduling.
+- 📅 **Calendar Integration**: Seamlessly sync tasks with your calendar.
+- 🚀 **Reminders & Notifications**: Never miss a deadline with timely alerts.
+- 🔍 **Task Filtering**: Filter tasks by priority, category, or deadline.
+- 📊 **Analytics**: Get insights into your productivity with charts and stats.
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## 🛠️ Technologies Used
 
-## Learn More
+- **Next.js** ⚛️
+- **TypeScript** 🟦
+- **Prisma** 📊
+- **Radix UI** 🖼️
+- **Tailwind CSS** 💅
+- **tRPC** ⚡
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## 🚀 Getting Started
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+To run the project locally:
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+1. Clone the repository:
 
-## How do I deploy this?
+```bash
+git clone https://github.com/TylerJenningsW/time-management.git
+```
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Set up the environment variables by creating an `.env` file based on `.env.example`.
+
+4. Run the development server:
+
+```bash
+npm run dev
+```
+
+## 📂 Project Structure
+
+- `/src/components` – UI components used in the app.
+- `/src/lib` – Utility functions.
+- `/prisma` – Database schema and migrations.
+- `/public` – Static assets.
+
+## 📜 License
+
+This project is licensed under the MIT License.
+
+## 🌟 Contributing
+
+Contributions are welcome! Feel free to open issues or submit PRs to improve the app.
+
+## 💬 Feedback
+
+If you have any feedback or questions, feel free to reach out to us via GitHub issues!
